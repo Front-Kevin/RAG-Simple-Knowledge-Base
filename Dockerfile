@@ -18,7 +18,8 @@ WORKDIR /app
 
 # Install backend dependencies
 COPY backend/requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir setuptools && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy backend source
 COPY backend/ ./
