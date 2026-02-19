@@ -63,7 +63,7 @@ Frontend (React SPA)
 
 ```bash
 # 下载配置文件并启动
-curl -fsSL https://raw.githubusercontent.com/meroc/rag-knowledgebase/main/deploy/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Front-Kevin/RAG-Simple-Knowledge-Base/main/deploy/install.sh | bash
 ```
 
 或者手动操作：
@@ -71,7 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/meroc/rag-knowledgebase/main/deploy
 ```bash
 # 下载 docker-compose.yml
 mkdir rag-knowledgebase && cd rag-knowledgebase
-curl -fsSL https://raw.githubusercontent.com/meroc/rag-knowledgebase/main/deploy/docker-compose.yml -o docker-compose.yml
+curl -fsSL https://raw.githubusercontent.com/Front-Kevin/RAG-Simple-Knowledge-Base/main/deploy/docker-compose.yml -o docker-compose.yml
 
 # 启动全部服务（Milvus + 应用）
 docker compose up -d

@@ -3,7 +3,7 @@
 #  RAG 知识库 — 一键安装脚本
 #
 #  用法:
-#    curl -fsSL https://raw.githubusercontent.com/meroc/rag-knowledgebase/main/deploy/install.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/Front-Kevin/RAG-Simple-Knowledge-Base/main/deploy/install.sh | bash
 #
 #  或者下载后执行:
 #    chmod +x install.sh && ./install.sh
@@ -11,7 +11,7 @@
 
 set -e
 
-REPO_URL="https://raw.githubusercontent.com/meroc/rag-knowledgebase/main/deploy"
+REPO_URL="https://raw.githubusercontent.com/Front-Kevin/RAG-Simple-Knowledge-Base/main/deploy"
 INSTALL_DIR="rag-knowledgebase"
 
 echo ""
