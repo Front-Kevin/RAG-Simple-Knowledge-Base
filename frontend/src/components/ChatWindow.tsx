@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { PaperAirplaneIcon, ChevronDownIcon, TrashIcon } from '@heroicons/react/24/solid'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { queryKnowledgeStream } from '../api/ragApi'
 import { useAppStore } from '../store/appStore'
 
@@ -72,15 +74,17 @@ export default function ChatWindow() {
             className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
           >
             <div className="flex items-end gap-2 max-w-[80%]">
-              <div
-                className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-md'
-                    : 'bg-gray-100 text-gray-900 rounded-bl-md'
-                }`}
-              >
-                {msg.content}
-              </div>
+              {msg.role === 'user' ? (
+                <div className="px-4 py-2.5 rounded-2xl rounded-br-md text-sm leading-relaxed whitespace-pre-wrap bg-blue-600 text-white">
+                  {msg.content}
+                </div>
+              ) : (
+                <div className="px-4 py-2.5 rounded-2xl rounded-bl-md text-sm leading-relaxed bg-gray-100 text-gray-900 prose prose-sm prose-gray max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-gray-800 prose-pre:text-gray-100 prose-code:before:content-none prose-code:after:content-none prose-headings:mt-3 prose-headings:mb-1">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              )}
             </div>
 
             {msg.retrieval && msg.retrieval.length > 0 && (
