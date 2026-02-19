@@ -1,22 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
-import { PaperAirplaneIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
-import { queryKnowledgeStream, type RetrievalHit } from '../api/ragApi'
+import { PaperAirplaneIcon, ChevronDownIcon, TrashIcon } from '@heroicons/react/24/solid'
+import { queryKnowledgeStream } from '../api/ragApi'
 import { useAppStore } from '../store/appStore'
 
-interface Message {
-  role: 'user' | 'assistant'
-  content: string
-  contexts?: string[]
-  retrieval?: RetrievalHit[]
-  useRerank?: boolean
-  prompt?: string
-}
-
 export default function ChatWindow() {
-  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const store = useAppStore()
+  const messages = store.chatMessages
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -27,12 +18,12 @@ export default function ChatWindow() {
     const question = input.trim()
     if (!question || loading) return
 
-    setMessages(prev => [...prev, { role: 'user', content: question }])
+    store.setChatMessages([...messages, { role: 'user', content: question }])
     setInput('')
     setLoading(true)
 
     // Push an empty assistant message that will be updated incrementally
-    setMessages(prev => [...prev, { role: 'assistant', content: '' }])
+    store.setChatMessages([...messages, { role: 'user', content: question }, { role: 'assistant', content: '' }])
 
     await queryKnowledgeStream(
       question,
@@ -43,42 +34,21 @@ export default function ChatWindow() {
       },
       {
         onMetadata: (data) => {
-          setMessages(prev => {
-            const updated = [...prev]
-            const last = updated[updated.length - 1]
-            updated[updated.length - 1] = {
-              ...last,
-              retrieval: data.retrieval,
-              contexts: data.contexts,
-              useRerank: data.use_rerank,
-              prompt: data.prompt,
-            }
-            return updated
+          store.updateLastMessage({
+            retrieval: data.retrieval,
+            contexts: data.contexts,
+            useRerank: data.use_rerank,
+            prompt: data.prompt,
           })
         },
         onDelta: (content) => {
-          setMessages(prev => {
-            const updated = [...prev]
-            const last = updated[updated.length - 1]
-            updated[updated.length - 1] = {
-              ...last,
-              content: last.content + content,
-            }
-            return updated
-          })
+          store.appendToLastMessage(content)
         },
         onDone: () => {
           setLoading(false)
         },
         onError: (error) => {
-          setMessages(prev => {
-            const updated = [...prev]
-            updated[updated.length - 1] = {
-              ...updated[updated.length - 1],
-              content: `查询失败: ${error.message}`,
-            }
-            return updated
-          })
+          store.updateLastMessage({ content: `查询失败: ${error.message}` })
           setLoading(false)
         },
       },
@@ -193,6 +163,16 @@ export default function ChatWindow() {
       {/* Input Area */}
       <div className="border-t border-gray-200 p-4">
         <div className="flex gap-3">
+          {messages.length > 0 && !loading && (
+            <button
+              onClick={() => store.clearChatMessages()}
+              aria-label="清空聊天记录"
+              title="清空聊天记录"
+              className="px-3 py-2.5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          )}
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
