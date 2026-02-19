@@ -52,8 +52,6 @@ services:
       MINIO_ADDRESS: minio:9000
     volumes:
       - milvus_data:/var/lib/milvus
-    ports:
-      - "19530:19530"
     depends_on:
       etcd:
         condition: service_healthy

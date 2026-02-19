@@ -44,9 +44,8 @@ services:
       MINIO_ADDRESS: minio:9000
     volumes:
       - milvus_data:/var/lib/milvus
-    ports:
-      - "19530:19530"   # gRPC
-      - "9091:9091"     # 健康检查
+    # ports:
+    #   - "19530:19530"   # 如需从宿主机直连 Milvus 可取消注释
     depends_on:
       etcd:
         condition: service_healthy
